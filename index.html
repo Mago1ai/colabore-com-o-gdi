@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colabore com o GDI</title>
+<meta name="description" content="Colabore com o GDI: patrocine o projeto GDI em Ação – Formação e Inclusão Esportiva, da ATBH, aprovado na Lei Estadual de Incentivo ao Esporte de Minas Gerais (Certidão nº 2026.02.0434).">
+<meta property="og:title" content="Colabore com o GDI">
+<meta property="og:description" content="Futebol de base gratuito para mais de 100 crianças e adolescentes do Aglomerado da Serra, em BH. Projeto aprovado no Minas Esportiva.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="GDI – Garotos da Igrejinha">
+<meta property="og:url" content="https://mago1ai.github.io/colabore-com-o-gdi/">
+<meta property="og:image" content="https://mago1ai.github.io/colabore-com-o-gdi/img/og-gdi.jpg">
+<meta property="og:image:secure_url" content="https://mago1ai.github.io/colabore-com-o-gdi/img/og-gdi.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<link rel="canonical" href="https://mago1ai.github.io/colabore-com-o-gdi/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Colabore com o GDI: futebol de base gratuito para mais de 100 crianças do Aglomerado da Serra">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16245c; --navy-2:#0d1740; --ink:#0b1230;
+  --red:#d32f2b; --red-2:#b3221f;
+  --paper:#f6f3ec; --paper-2:#ece7dc; --white:#fff;
+  --muted:#5b6380; --line:rgba(22,36,92,.14);
+  --gold:#f2b632;
+  --display:"Big Shoulders Display", Impact, sans-serif;
+  --body:"Manrope", system-ui, sans-serif;
+  --wrap:min(1180px, calc(100% - 32px));
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;overflow-x:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+.wrap{width:var(--wrap);margin-inline:auto}
+.eyebrow{font-weight:800;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red);display:inline-flex;align-items:center;gap:.6em}
+.eyebrow::before{content:"";width:28px;height:3px;background:currentColor;border-radius:2px}
+h1,h2,h3{font-family:var(--display);line-height:.92;letter-spacing:-.005em;text-transform:uppercase}
+h2{font-size:clamp(2.6rem,6.5vw,5.2rem);font-weight:900;margin:.35em 0 .3em}
+h3{font-size:1.7rem;font-weight:800}
+.lead{font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--muted);max-width:62ch}
+section{position:relative}
+.pad{padding:clamp(80px,12vw,150px) 0}
+.btn{display:inline-flex;align-items:center;gap:.6em;font-weight:800;text-decoration:none;border-radius:999px;padding:.95em 1.6em;font-size:.95rem;border:0;cursor:pointer;transition:transform .2s, background .2s, color .2s;font-family:var(--body)}
+.btn:hover{transform:translateY(-2px)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-2)}
+.btn-ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.btn-ghost:hover{background:#fff;color:var(--navy)}
+
+/* ---------- NAV (aparece após a capa) ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(246,243,236,.94);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line);transform:translateY(-100%);transition:transform .35s}
+.nav.show{transform:none}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:900;font-size:1.3rem;text-transform:uppercase;color:var(--navy)}
+.brand img{width:40px}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{text-decoration:none;font-weight:700;font-size:.9rem;color:var(--navy)}
+.nav-links .btn{padding:.65em 1.15em;color:#fff}
+@media (max-width:900px){.nav-links a:not(.btn){display:none}}
+
+/* ---------- CAPA DE REVISTA ---------- */
+.cover{min-height:100svh;background:var(--navy-2);color:#fff;overflow:hidden;display:flex;flex-direction:column}
+.cover-photo{position:absolute;inset:0}
+.cover-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.cover::after{content:"";position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(180deg,rgba(13,23,64,.92) 0%,rgba(13,23,64,.55) 26%,rgba(13,23,64,.15) 46%,rgba(13,23,64,.55) 66%,rgba(13,23,64,.96) 90%)}
+.cover-inner{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;width:var(--wrap);margin:0 auto;padding:18px 0 34px}
+.issue{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.74rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;border-bottom:2px solid rgba(255,255,255,.85);padding-bottom:10px}
+.issue span:nth-child(2){color:var(--gold)}
+@media (max-width:640px){.issue span:nth-child(3){display:none}}
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:6px}
+.masthead h1{font-size:clamp(7rem,30vw,22rem);font-weight:900;line-height:.78;letter-spacing:-.02em;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,.35)}
+.masthead h1 span{display:inline-block}
+.mast-side{text-align:right;padding-bottom:1.2vw}
+.mast-side img{width:clamp(92px,13vw,170px);margin-left:auto;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+.mast-side p{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(.95rem,1.6vw,1.3rem);line-height:1.05;margin-top:8px}
+.cover-body{margin-top:auto;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end;padding-top:40px}
+@media (max-width:900px){.cover-body{grid-template-columns:1fr}}
+.kicker{display:inline-block;background:var(--red);color:#fff;font-weight:800;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:7px 12px;border-radius:4px}
+.cover h2{font-size:clamp(3rem,8.4vw,7.4rem);margin:14px 0 14px;text-shadow:0 4px 24px rgba(0,0,0,.4)}
+.cover h2 .line{display:block;overflow:hidden;padding-bottom:.03em}
+.cover h2 .line>span{display:inline-block}
+.cover h2 em{font-style:normal;color:var(--gold)}
+.cover-lede{max-width:54ch;font-size:clamp(1rem,1.4vw,1.15rem);background:rgba(13,23,64,.72);backdrop-filter:blur(6px);padding:14px 16px;border-left:4px solid var(--red);border-radius:0 10px 10px 0}
+.cover-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.covlines{display:grid;gap:10px}
+.covline{border-radius:10px;padding:14px 16px;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)}
+.covline small{display:block;font-weight:800;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.covline strong{display:block;font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(1.5rem,2.4vw,2rem);line-height:1;margin-top:4px}
+.covline span{display:block;font-size:.85rem;font-weight:600;margin-top:4px}
+.cl-1{background:#fff;color:var(--navy)}
+.cl-1 small{color:var(--red);opacity:1}
+.cl-2{background:var(--gold);color:var(--ink)}
+.cl-3{background:var(--red);color:#fff}
+
+/* ---------- MÚSICA ---------- */
+.music{position:fixed;right:16px;bottom:16px;z-index:60;width:48px;height:48px;display:grid;place-items:center;background:var(--navy);color:#fff;border:2px solid rgba(255,255,255,.18);border-radius:50%;cursor:pointer;box-shadow:0 14px 30px -10px rgba(11,18,48,.6);transition:transform .2s;animation:pop .6s 1.6s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+.music:hover{transform:scale(1.08)}
+.music svg{width:22px;height:22px}
+.music .waves{opacity:0;transition:opacity .2s}
+.music .mute{opacity:1;transition:opacity .2s}
+.music.on .waves{opacity:1;animation:pulse 1.4s ease-in-out infinite}
+.music.on .mute{opacity:0}
+.music.on::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--gold);opacity:0;animation:ring 2s ease-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes ring{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.25);opacity:0}}
+
+/* ---------- STATS ---------- */
+.stats{background:var(--navy-2);color:#fff;padding:0 0 90px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.12);border-radius:var(--r);overflow:hidden}
+.stat{background:var(--navy-2);padding:34px 26px}
+.stat .num{font-family:var(--display);font-weight:900;font-size:clamp(3rem,6vw,4.6rem);line-height:1}
+.stat .num small{font-size:.5em;color:var(--gold);margin-left:2px}
+.stat p{color:rgba(255,255,255,.72);font-size:.95rem;margin-top:8px}
+@media (max-width:800px){.stats-grid{grid-template-columns:1fr 1fr}}
+
+/* ---------- A SERRA ---------- */
+.serra{background:var(--ink);color:#fff;overflow:hidden}
+.serra-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:center}
+@media (max-width:900px){.serra-grid{grid-template-columns:1fr}}
+.serra .eyebrow{color:var(--gold)}
+.serra .lead{color:rgba(255,255,255,.78)}
+.versus{display:grid;gap:12px;margin-top:30px}
+.vs-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px}
+.vs-row .bad{text-align:right;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(1.4rem,2.6vw,2rem);color:rgba(255,255,255,.35);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:3px}
+.vs-row .arrow{width:34px;height:34px;border-radius:50%;background:var(--red);display:grid;place-items:center;font-weight:900}
+.vs-row .good{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(1.4rem,2.6vw,2rem);color:#fff}
+.serra-photo{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5}
+.serra-photo img{width:100%;height:100%;object-fit:cover}
+.serra-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:60px 22px 20px;background:linear-gradient(transparent,rgba(11,18,48,.92));font-weight:700}
+
+/* ---------- PROJETO ---------- */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(36px,6vw,90px);align-items:center}
+@media (max-width:900px){.split{grid-template-columns:1fr}}
+.photo-stack{position:relative;aspect-ratio:4/5}
+.photo-stack img{position:absolute;border-radius:var(--r);object-fit:cover;box-shadow:0 30px 60px -20px rgba(11,18,48,.4)}
+.photo-stack .a{top:0;left:0;width:82%;height:78%}
+.photo-stack .b{right:0;bottom:0;width:58%;height:52%;border:8px solid var(--paper)}
+.tag-float{position:absolute;left:-10px;bottom:12%;background:var(--red);color:#fff;font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:1.3rem;line-height:1;padding:14px 18px;border-radius:12px;transform:rotate(-4deg);box-shadow:0 14px 30px -10px rgba(211,47,43,.6)}
+.checks{list-style:none;margin-top:26px;display:grid;gap:14px}
+.checks li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;font-weight:600}
+.checks li::before{content:"";width:28px;height:28px;border-radius:50%;background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/14px no-repeat}
+
+/* ---------- TV ---------- */
+.tv{background:var(--paper-2)}
+.tv-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:clamp(24px,4vw,56px);align-items:center;margin-top:30px}
+@media (max-width:900px){.tv-grid{grid-template-columns:1fr}}
+.player{position:relative;border-radius:var(--r);overflow:hidden;background:#000;box-shadow:0 40px 70px -30px rgba(11,18,48,.55);aspect-ratio:640/352}
+.player video{width:100%;height:100%;object-fit:cover}
+.live{position:absolute;top:14px;left:14px;z-index:2;background:var(--red);color:#fff;font-weight:800;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border-radius:4px;pointer-events:none}
+.press{display:grid;gap:14px}
+.press a{text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:block;transition:transform .2s, box-shadow .2s}
+.press a:hover{transform:translateY(-3px);box-shadow:0 16px 30px -18px rgba(11,18,48,.35)}
+.press small{font-weight:800;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.press strong{display:block;font-size:1.05rem;margin-top:6px;line-height:1.35}
+.press span{display:block;color:var(--muted);font-size:.85rem;margin-top:6px}
+
+/* ---------- MÉTODO ---------- */
+.method{background:var(--white)}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:50px;position:relative}
+.steps::before{content:"";position:absolute;top:34px;left:6%;right:6%;height:3px;background:var(--paper-2)}
+.steps .bar{position:absolute;top:34px;left:6%;height:3px;background:var(--red);width:0;max-width:88%}
+.step .dot{width:70px;height:70px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:1.8rem;position:relative;z-index:1;border:6px solid var(--white)}
+.step h3{font-size:1.35rem;margin:18px 0 6px;color:var(--navy)}
+.step p{font-size:.92rem;color:var(--muted)}
+@media (max-width:900px){
+  .steps{grid-template-columns:1fr;gap:26px}
+  .steps::before,.steps .bar{display:none}
+  .step{display:grid;grid-template-columns:70px 1fr;gap:18px;align-items:start}
+  .step h3{margin-top:6px}
+}
+.plan{margin-top:80px}
+.plan h3{font-size:2.2rem;color:var(--navy)}
+.plan ol{list-style:none;counter-reset:e;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:22px}
+.plan li{counter-increment:e;background:var(--paper);border-radius:14px;padding:18px 18px 18px 64px;position:relative;font-weight:600;font-size:.93rem;line-height:1.45}
+.plan li::before{content:counter(e);position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:8px;background:var(--red);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:1.2rem}
+
+/* ---------- CONQUISTAS ---------- */
+.trophies{background:var(--navy);color:#fff;overflow:hidden}
+.trophies-bg{position:absolute;inset:0;z-index:0}
+.trophies-bg video{width:100%;height:100%;object-fit:cover;opacity:.22;filter:saturate(.6)}
+.trophies-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,36,92,.6),rgba(22,36,92,.92))}
+.trophies>*:not(.trophies-bg){position:relative;z-index:1}
+.trophies-head{padding-top:clamp(80px,10vw,120px)}
+.trophies-head .eyebrow{color:var(--gold)}
+.trophies-head .lead{color:rgba(255,255,255,.8)}
+.track-outer{padding:50px 0 clamp(80px,10vw,120px)}
+.track{display:flex;gap:22px;padding-left:max(16px,calc((100% - 1180px)/2));padding-right:16px;width:max-content}
+.year{width:min(380px,82vw);flex:none;background:rgba(13,23,64,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.16);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.year .yimg{height:210px;overflow:hidden}
+.year .yimg img{width:100%;height:100%;object-fit:cover;transform:scale(1.08)}
+.year .ybody{padding:24px 24px 28px}
+.year .y{font-family:var(--display);font-weight:900;font-size:4.2rem;line-height:.9;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.8)}
+.year ul{list-style:none;margin-top:14px;display:grid;gap:10px}
+.year li{display:flex;gap:10px;font-weight:600;font-size:.98rem;line-height:1.35}
+.year li i{flex:none;width:24px;height:22px;border-radius:6px;background:var(--gold);color:var(--ink);font-style:normal;font-weight:900;font-size:.72rem;display:grid;place-items:center;margin-top:1px}
+.year li i.p{background:rgba(255,255,255,.2);color:#fff}
+@media (max-width:860px){.track{flex-direction:column;width:auto;padding:0 16px}.year{width:100%}}
+
+/* ---------- GALERIA ---------- */
+.gallery{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:90px;gap:12px;margin-top:50px}
+.gallery figure{overflow:hidden;border-radius:14px}
+.gallery img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gallery figure:hover img{transform:scale(1.05)}
+.g1{grid-column:span 5;grid-row:span 4}.g2{grid-column:span 4;grid-row:span 2}.g3{grid-column:span 3;grid-row:span 3}
+.g4{grid-column:span 4;grid-row:span 2}.g5{grid-column:span 3;grid-row:span 3}.g6{grid-column:span 4;grid-row:span 2}.g7{grid-column:span 5;grid-row:span 2}
+@media (max-width:800px){.gallery{grid-template-columns:1fr 1fr;grid-auto-rows:150px}.gallery figure{grid-column:span 1 !important;grid-row:span 1 !important}.gallery .g1{grid-column:span 2 !important;grid-row:span 2 !important}}
+
+/* ---------- PATROCÍNIO ---------- */
+.sponsor{background:var(--paper-2)}
+.money{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,60px);margin-top:40px;align-items:stretch}
+@media (max-width:900px){.money{grid-template-columns:1fr}}
+.total{background:var(--navy);color:#fff;border-radius:var(--r);padding:clamp(28px,4vw,44px);display:flex;flex-direction:column}
+.total small{font-weight:800;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.total .big{font-family:var(--display);font-weight:900;font-size:clamp(4rem,10vw,7.5rem);line-height:.9;margin:10px 0 24px}
+.split-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.12)}
+.split-bar i{display:block;height:100%}
+.split-bar .p1{background:var(--red);width:90%}.split-bar .p2{background:var(--gold);width:10%}
+.legend{display:grid;gap:10px;margin-top:18px}
+.legend div{display:flex;justify-content:space-between;gap:12px;font-weight:600;font-size:.95rem}
+.legend b{font-family:var(--display);font-size:1.4rem;font-weight:900}
+.legend .k{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:middle}
+.total .meta{margin-top:auto;padding-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.total .meta div{background:rgba(255,255,255,.08);border-radius:12px;padding:14px 16px}
+.total .meta span{display:block;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.1em}
+.total .meta strong{font-family:var(--display);font-size:1.5rem;font-weight:900}
+.why{background:#fff;border-radius:var(--r);padding:clamp(28px,4vw,40px);border:1px solid var(--line)}
+.why h3{font-size:2rem;color:var(--navy)}
+.why p{color:var(--muted);margin-top:12px}
+.why .obj{margin-top:18px;padding:16px 18px;border-left:4px solid var(--red);background:var(--paper);border-radius:0 12px 12px 0;font-weight:600;font-size:.95rem}
+.why .btn{margin-top:24px}
+
+/* ---------- EQUIPE ---------- */
+.team{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:46px}
+@media (max-width:800px){.team{grid-template-columns:1fr}}
+.person{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:30px}
+.person .role{font-weight:800;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.person h3{font-size:2rem;margin:6px 0 10px;color:var(--navy)}
+.person p{color:var(--muted);font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chips span{font-size:.78rem;font-weight:700;background:var(--paper);border-radius:999px;padding:6px 12px;color:var(--navy)}
+
+/* ---------- TRANSPARÊNCIA ---------- */
+.trust{background:var(--white)}
+.doc{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:40px}
+.doc div{background:#fff;padding:22px 24px}
+.doc small{display:block;font-weight:800;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.doc strong{display:block;margin-top:6px;font-size:1.05rem;color:var(--navy)}
+@media (max-width:800px){.doc{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.doc{grid-template-columns:1fr}}
+
+/* ---------- CTA ---------- */
+.cta{background:var(--navy-2);color:#fff;overflow:hidden;text-align:center}
+.cta-bg{position:absolute;inset:0;opacity:.22}
+.cta-bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
+.cta .wrap{position:relative}
+.cta h2{font-size:clamp(3rem,9vw,7.5rem);margin-top:.2em}
+.cta h2 em{font-style:normal;color:var(--red)}
+.cta .lead{color:rgba(255,255,255,.82);margin:0 auto}
+.cta-title .line{display:block;overflow:hidden;padding-bottom:.03em}
+.cta-title .line>span{display:inline-block}
+.cta-main{margin-top:36px}
+.btn-wa{background:#25d366;color:#0b1230;font-size:clamp(1.05rem,2vw,1.3rem);padding:1.1em 2em;box-shadow:0 18px 40px -12px rgba(37,211,102,.6)}
+.btn-wa:hover{background:#2ee978}
+.btn-wa svg{width:28px;height:28px}
+.contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px auto 0;max-width:900px}
+.contact-cards a{text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:18px;transition:background .2s, transform .2s;overflow-wrap:anywhere}
+.contact-cards a:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}
+.contact-cards small{display:block;font-weight:800;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.contact-cards strong{display:block;margin-top:6px;font-size:1.05rem}
+@media (max-width:760px){.contact-cards{grid-template-columns:1fr}}
+.pdf-btn{margin-top:26px;font-size:.85rem;padding:.75em 1.3em}
+.cta .logo{width:130px;margin:0 auto 14px;filter:drop-shadow(0 12px 26px rgba(0,0,0,.5))}
+footer{background:var(--ink);color:rgba(255,255,255,.6);font-size:.82rem;padding:34px 0 90px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important;animation:none !important}}
+@media print{
+  @page{size:A4;margin:12mm}
+  .nav,.music,.no-print,.trophies-bg{display:none !important}
+  *{opacity:1 !important;visibility:visible !important;transform:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cover{min-height:auto}
+  .pin-spacer{height:auto !important;padding:0 !important}
+  .track{flex-wrap:wrap;width:auto !important}.year{width:31%}
+  section{break-inside:avoid-page}
+  .pad{padding:40px 0}
+}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#topo"><img src="img/logo-gdi-urso.png" alt="">GDI em Ação</a>
+    <nav class="nav-links">
+      <a href="#projeto">Projeto</a>
+      <a href="#conquistas">Conquistas</a>
+      <a href="#serra">A Serra</a>
+      <a href="#tv">Na TV</a>
+      <a class="btn btn-red" href="#patrocinio">Quero patrocinar</a>
+    </nav>
+  </div>
+</header>
+
+<button class="music no-print" id="music" type="button" aria-pressed="false" aria-label="Ligar música" title="Ligar música">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor"/>
+    <g class="waves"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></g>
+    <g class="mute"><path d="m16 9 5 6M21 9l-5 6"/></g>
+  </svg>
+</button>
+<audio id="bgm" src="media/musica-gdi.mp3" loop preload="auto"></audio>
+
+<main id="topo">
+
+<!-- CAPA -->
+<section class="cover">
+  <div class="cover-photo"><img src="img/hero.jpg" alt="Três crianças do GDI sentadas no campo de terra, uniformizadas, sorrindo com uma bola"></div>
+  <div class="cover-inner">
+    <div class="issue cv-in">
+      <span>Edição especial · Patrocínio 2026</span>
+      <span>Aglomerado da Serra · BH</span>
+      <span>Garotos da Igrejinha</span>
+    </div>
+    <div class="masthead">
+      <h1 aria-label="GDI"><span>G</span><span>D</span><span>I</span></h1>
+      <div class="mast-side cv-in">
+        <img src="img/logo-gdi-urso.png" alt="Escudo do GDI com o mascote urso">
+        <p>Escolinha<br>de futebol</p>
+      </div>
+    </div>
+    <div class="cover-body">
+      <div>
+        <span class="kicker cv-in">Futebol de base · Formação e inclusão</span>
+        <h2>
+          <span class="line"><span>Do Aglomerado</span></span>
+          <span class="line"><span>da Serra para</span></span>
+          <span class="line"><span><em>o Brasil.</em></span></span>
+        </h2>
+        <p class="cover-lede cv-in">Desde 2020, a Escolinha GDI – Garotos da Igrejinha forma mais de 100 crianças e adolescentes no futebol e na vida, com títulos em Minas e campanhas de destaque em torneios nacionais. Agora o projeto <strong>GDI em Ação</strong>, aprovado na Lei Estadual de Incentivo ao Esporte, convida a sua empresa para entrar em campo.</p>
+        <div class="cover-cta cv-in">
+          <a class="btn btn-red" href="#patrocinio">Quero patrocinar →</a>
+          <a class="btn btn-ghost" href="#tv">▶ Ver reportagem</a>
+        </div>
+      </div>
+      <div class="covlines">
+        <div class="covline cl-1 cv-line"><small>Aprovado · Minas Esportiva</small><strong>Certidão nº 2026.02.0434</strong><span>Lei Estadual de Incentivo ao Esporte de MG</span></div>
+        <div class="covline cl-2 cv-line"><small>Atendimento gratuito</small><strong>+ de 100 crianças</strong><span>e adolescentes do Aglomerado da Serra</span></div>
+        <div class="covline cl-3 cv-line"><small>Valor para captação</small><strong>R$ 500 mil</strong><span>Prazo até 15/07/2028</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat"><div class="num"><small>+</small><span data-count="100">100</span></div><p>crianças e adolescentes atendidos de graça no Aglomerado da Serra</p></div>
+      <div class="stat"><div class="num"><span>2020</span></div><p>ano de fundação: seis anos de trabalho contínuo na comunidade</p></div>
+      <div class="stat"><div class="num"><span data-count="7">7</span><small>títulos</small></div><p>de 2022 a 2025 em competições de futebol de base</p></div>
+      <div class="stat"><div class="num"><span data-count="12">12</span><small>meses</small></div><p>de execução do projeto aprovado</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJETO -->
+<section class="pad" id="projeto">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow reveal">O projeto</span>
+      <h2 class="reveal">Futebol que forma gente.</h2>
+      <p class="lead reveal">A <strong>Escolinha GDI – Garotos da Igrejinha</strong> é mantida pela Associação Social, Cultural e Esportiva Transformação Belo Horizonte (ATBH), cujo corpo diretivo é formado por moradores e lideranças comunitárias do Aglomerado da Serra. Desde 2020, usa o futebol de base para promover desenvolvimento físico, emocional e social.</p>
+      <ul class="checks">
+        <li class="reveal">Prevenção de riscos sociais, disciplina e lazer para crianças e jovens em situação de vulnerabilidade.</li>
+        <li class="reveal">Habilidades motoras, coordenação e aptidão física geral.</li>
+        <li class="reveal">Trabalho em equipe, cooperação, respeito mútuo e autoestima.</li>
+        <li class="reveal">Valores éticos e cidadania integrados à formação esportiva.</li>
+      </ul>
+    </div>
+    <div class="photo-stack">
+      <img class="a" src="img/roda.jpg" alt="Crianças sentadas em roda ouvindo o treinador no campo de terra">
+      <img class="b" src="img/finalizacao.jpg" alt="Atleta do GDI finalizando a gol em campo sintético">
+      <span class="tag-float">Desde 2020<br>na Serra</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONQUISTAS -->
+<section class="trophies" id="conquistas">
+  <div class="trophies-bg" aria-hidden="true"><video src="media/taca-band-2022.mp4" muted loop playsinline autoplay preload="metadata"></video></div>
+  <div class="wrap trophies-head">
+    <span class="eyebrow">Resultados em campo</span>
+    <h2>Da terra batida ao pódio.</h2>
+    <p class="lead">O trabalho social também aparece no placar, com títulos em Minas e boas colocações nos maiores torneios de base de Goiás.</p>
+  </div>
+  <div class="track-outer">
+    <div class="track" id="track">
+      <article class="year"><div class="yimg"><img src="img/time-terra.jpg" alt="Equipe do GDI perfilada no campo de terra"></div><div class="ybody"><div class="y">2022</div><ul><li><i>1º</i>Campeão da Taça Band, Sub-13</li></ul></div></article>
+      <article class="year"><div class="yimg"><img src="img/noite.jpg" alt="Atletas do GDI em treino noturno"></div><div class="ybody"><div class="y">2023</div><ul><li><i>1º</i>Campeão da Taça Band, Sub-15</li></ul></div></article>
+      <article class="year"><div class="yimg"><img src="img/taca-band.jpg" alt="Equipe do GDI comemorando no pódio da Taça Band Minas"></div><div class="ybody"><div class="y">2024</div><ul><li><i>1º</i>Campeão da Taça Band, Sub-13</li><li><i>1º</i>Campeão da Taça Band, Sub-10</li></ul></div></article>
+      <article class="year"><div class="yimg"><img src="img/super-copa.jpg" alt="Equipe do GDI na premiação da Super Copa do Brasil de Base 2025"></div><div class="ybody"><div class="y">2025</div><ul><li><i>1º</i>Campeão da PQ Cup, Sub-11</li><li><i>1º</i>Campeão da Copa do Brasil de Base, Sub-9</li><li><i>1º</i>Campeão da Copa do Brasil de Base, Sub-10</li><li><i class="p">4º</i>4º lugar geral na Caldas Cup (GO)</li></ul></div></article>
+      <article class="year"><div class="yimg"><img src="img/palco.jpg" alt="Atletas e comissão técnica do GDI no palco de premiação"></div><div class="ybody"><div class="y">2026</div><ul><li><i class="p">8º</i>8º lugar geral na GO Cup, uma das maiores competições de base do Brasil</li></ul></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- A SERRA -->
+<section class="serra pad" id="serra">
+  <div class="wrap serra-grid">
+    <div>
+      <span class="eyebrow reveal">Por que o GDI existe</span>
+      <h2 class="reveal">Na Serra, cada criança é disputada.</h2>
+      <p class="lead reveal">O Aglomerado da Serra, em Belo Horizonte, convive diariamente com o tráfico, as drogas e a criminalidade. É nesse cenário que o GDI atua: ocupar o tempo das crianças com treino, disciplina e acompanhamento escolar, para afastá-las dos riscos sociais e mostrar outro caminho.</p>
+      <div class="versus" id="versus">
+        <div class="vs-row"><span class="bad">Tráfico</span><span class="arrow">→</span><span class="good">Treino</span></div>
+        <div class="vs-row"><span class="bad">Rua</span><span class="arrow">→</span><span class="good">Time</span></div>
+        <div class="vs-row"><span class="bad">Risco</span><span class="arrow">→</span><span class="good">Disciplina</span></div>
+        <div class="vs-row"><span class="bad">Abandono</span><span class="arrow">→</span><span class="good">Escola</span></div>
+      </div>
+    </div>
+    <figure class="serra-photo reveal-img">
+      <img src="img/treino.jpg" alt="Treino do GDI no campo de terra do Aglomerado da Serra ao entardecer">
+      <figcaption>Treino no campo de terra do Aglomerado da Serra</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- NA TV -->
+<section class="tv pad" id="tv">
+  <div class="wrap">
+    <span class="eyebrow reveal">O GDI na TV</span>
+    <h2 class="reveal">Quem viu, contou.</h2>
+    <p class="lead reveal">Uma equipe de reportagem foi até a Serra acompanhar o treino e ouvir os atletas. Dê o play: a música de fundo pausa sozinha e volta quando o vídeo para.</p>
+    <div class="tv-grid">
+      <div class="player reveal">
+        <span class="live">Reportagem</span>
+        <video id="report" src="media/reportagem.mp4" poster="media/reportagem-poster.jpg" controls preload="none" playsinline></video>
+      </div>
+      <div class="press">
+        <a class="reveal" href="https://www.em.com.br/app/colunistas/rodrigo-scapolatempore/2022/06/16/noticia-rodrigo-scapolatempore,1373704/escolinha-de-futebol-gdi-traz-esperanca-para-carentes.shtml" target="_blank" rel="noopener">
+          <small>Imprensa · Estado de Minas</small>
+          <strong>“Escolinha de Futebol GDI traz esperança para carentes”</strong>
+          <span>Coluna de Rodrigo Scapolatempore, 2022 ↗</span>
+        </a>
+        <a class="reveal" href="https://www.almg.gov.br/atividade-parlamentar/projetos-de-lei/texto/print.html?tipo=PL&amp;num=5763&amp;ano=2026" target="_blank" rel="noopener">
+          <small>Assembleia Legislativa de MG</small>
+          <strong>Projeto de Lei nº 5.763/2026: utilidade pública da ATBH</strong>
+          <span>Ver o texto na ALMG ↗</span>
+        </a>
+        <a class="reveal" href="https://www.instagram.com/escolinha.gdi/" target="_blank" rel="noopener">
+          <small>Instagram</small>
+          <strong>@escolinha.gdi</strong>
+          <span>O dia a dia dos treinos e competições ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO -->
+<section class="method pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">Metodologia</span>
+    <h2 class="reveal">Cada treino, cinco tempos.</h2>
+    <p class="lead reveal">Ensino progressivo e lúdico, respeitando a faixa etária e a fase de desenvolvimento motor de cada criança.</p>
+    <div class="steps" id="steps">
+      <span class="bar"></span>
+      <div class="step"><span class="dot">1</span><div><h3>Aquecimento</h3><p>Ativação motora e mobilidade para prevenir lesões.</p></div></div>
+      <div class="step"><span class="dot">2</span><div><h3>Fundamentos</h3><p>Passe, controle, recepção, condução, cabeceio e finalização.</p></div></div>
+      <div class="step"><span class="dot">3</span><div><h3>Tático e coletivo</h3><p>Jogos em espaço reduzido: decisão, posicionamento, marcação e cooperação.</p></div></div>
+      <div class="step"><span class="dot">4</span><div><h3>Volta à calma</h3><p>Relaxamento, alongamento estático e desaceleração.</p></div></div>
+      <div class="step"><span class="dot">5</span><div><h3>Valores</h3><p>Roda de conversa sobre disciplina, regras, convivência e acompanhamento escolar.</p></div></div>
+    </div>
+    <div class="plan">
+      <h3 class="reveal">Cronograma em 7 etapas</h3>
+      <ol>
+        <li class="reveal">Apresentação da comissão técnica e regras de convivência, disciplina e cuidado com materiais e espaços.</li>
+        <li class="reveal">Avaliação e diagnóstico motor inicial, com exercícios de capacidade física geral.</li>
+        <li class="reveal">Fundamentos de passe, recepção e controle de bola.</li>
+        <li class="reveal">Drible, condução de bola em velocidade e finalizações.</li>
+        <li class="reveal">Jogos táticos de posicionamento, noção defensiva e ofensiva e condicionamento.</li>
+        <li class="reveal">Jogos coletivos orientados, simulações de partida e transições táticas.</li>
+        <li class="reveal">Torneios internos, avaliação do impacto social e integração com famílias e comunidade.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIA -->
+<section class="pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">Na prática</span>
+    <h2 class="reveal">O que o seu apoio sustenta.</h2>
+    <div class="gallery">
+      <figure class="g1"><img src="img/chute.jpg" alt="Atleta do GDI chutando a bola em torneio" loading="lazy"></figure>
+      <figure class="g2"><img src="img/time-campo.jpg" alt="Equipe do GDI posando no campo sintético" loading="lazy"></figure>
+      <figure class="g3"><img src="img/conducao.jpg" alt="Atleta conduzindo a bola em velocidade" loading="lazy"></figure>
+      <figure class="g4"><img src="img/grupo.jpg" alt="Grupo de crianças sentadas no campo antes do treino" loading="lazy"></figure>
+      <figure class="g5"><img src="img/medalhas.jpg" alt="Crianças com medalhas e troféu ao lado dos treinadores" loading="lazy"></figure>
+      <figure class="g6"><img src="img/noite.jpg" alt="Atletas do GDI uniformizados à noite" loading="lazy"></figure>
+      <figure class="g7"><img src="img/roda.jpg" alt="Roda de conversa com o treinador" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- PATROCÍNIO -->
+<section class="sponsor pad" id="patrocinio">
+  <div class="wrap">
+    <span class="eyebrow reveal">Seja patrocinador</span>
+    <h2 class="reveal">Escale sua empresa no time.</h2>
+    <p class="lead reveal">O GDI em Ação está aprovado na <strong>Lei Estadual de Incentivo ao Esporte de Minas Gerais</strong>: empresas podem patrocinar o projeto com incentivo fiscal do ICMS.</p>
+    <div class="money">
+      <div class="total reveal">
+        <small>Valor aprovado para captação</small>
+        <div class="big">R$ <span data-count="500">500</span> mil</div>
+        <div class="split-bar" aria-hidden="true"><i class="p1"></i><i class="p2"></i></div>
+        <div class="legend">
+          <div><span><i class="k" style="background:var(--red)"></i>Repassado ao projeto esportivo</span><b>R$ 450.000</b></div>
+          <div><span><i class="k" style="background:var(--gold)"></i>Destinado a projetos com dificuldade de captação</span><b>R$ 50.000</b></div>
+        </div>
+        <div class="meta">
+          <div><span>Prazo de captação</span><strong>15/07/2028</strong></div>
+          <div><span>Execução</span><strong>12 meses</strong></div>
+        </div>
+      </div>
+      <div class="why reveal">
+        <h3>O que o seu patrocínio realiza</h3>
+        <p>Objeto do projeto, conforme a certidão de aprovação:</p>
+        <div class="obj">Ofertar aulas gratuitas de iniciação esportiva em futebol de campo para 100 crianças e adolescentes de 5 a 15 anos, promovendo a inclusão social, o desenvolvimento motor e o respeito mútuo.</div>
+        <p>Fale com a gente para combinar o valor e a forma de participação da sua empresa.</p>
+        <a class="btn btn-red" href="#contato">Quero conversar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<section class="pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">Quem está em campo</span>
+    <h2 class="reveal">Gente da comunidade no comando.</h2>
+    <div class="team">
+      <article class="person reveal">
+        <span class="role">Representante legal · ATBH</span>
+        <h3>Denise Bonifácio Elias</h3>
+        <p>À frente de um corpo diretivo de moradores e lideranças comunitárias locais, com experiência em mobilização social, gestão esportiva, captação de recursos e coordenação de categorias de base.</p>
+        <div class="chips"><span>Gestão esportiva</span><span>Mobilização social</span><span>Captação de recursos</span></div>
+      </article>
+      <article class="person reveal">
+        <span class="role">Monitor e responsável técnico</span>
+        <h3>Ramon Bonifácio de Moura</h3>
+        <p>No GDI desde 2020: planeja treinos, forma atletas, organiza equipes e delegações e acompanha os times em competições dentro e fora de Minas Gerais.</p>
+        <div class="chips"><span>Webinar CBF – Gestão do Futebol (2022)</span><span>Webinar CBF – Treinador de Base (2022)</span><span>Curso de Treinador de Meninos (2023)</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TRANSPARÊNCIA -->
+<section class="trust pad">
+  <div class="wrap">
+    <span class="eyebrow reveal">Transparência</span>
+    <h2 class="reveal">Projeto aprovado pelo Governo de Minas.</h2>
+    <div class="doc reveal">
+      <div><small>Projeto</small><strong>GDI em Ação – Formação e Inclusão Esportiva</strong></div>
+      <div><small>Certidão de aprovação</small><strong>nº 2026.02.0434 · 16/07/2026</strong></div>
+      <div><small>Base legal</small><strong>Lei 20.824/2013 · Decreto 46.308/2013 · Edital 2026.02</strong></div>
+      <div><small>Executor</small><strong>ATBH · CNPJ 38.245.317/0001-60</strong></div>
+      <div><small>Órgão</small><strong>SEDESE · Minas Esportiva Incentivo ao Esporte</strong></div>
+      <div><small>Execução</small><strong>12 meses a partir da autorização da SEDESE</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta pad" id="contato">
+  <div class="cta-bg"><img src="img/time-campo.jpg" alt=""></div>
+  <div class="wrap">
+    <img class="logo reveal" src="img/logo-gdi-urso.png" alt="Escudo do GDI com o mascote urso">
+    <span class="eyebrow reveal" style="color:var(--gold)">A Serra não pode esperar</span>
+    <h2 class="cta-title"><span class="line"><span>Entre em campo</span></span><span class="line"><span><em>com a gente.</em></span></span></h2>
+    <p class="lead reveal">São mais de 100 crianças do Aglomerado da Serra esperando pela bola, pelo uniforme e pelo time. Patrocine o GDI em Ação e coloque a sua marca do lado certo dessa história.</p>
+    <div class="cta-main reveal">
+      <a class="btn btn-wa" href="https://wa.me/5531973387074?text=Ol%C3%A1!%20Quero%20saber%20como%20patrocinar%20o%20GDI%20em%20A%C3%A7%C3%A3o." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>
+        Quero patrocinar pelo WhatsApp
+      </a>
+    </div>
+    <div class="contact-cards reveal">
+      <a href="tel:+5531973387074"><small>Telefone / WhatsApp</small><strong>(31) 97338-7074</strong></a>
+      <a href="https://www.instagram.com/escolinha.gdi/" target="_blank" rel="noopener"><small>Instagram</small><strong>@escolinha.gdi</strong></a>
+      <a href="mailto:denisebonifacio86@gmail.com?subject=Patroc%C3%ADnio%20GDI%20em%20A%C3%A7%C3%A3o"><small>E-mail</small><strong>denisebonifacio86@gmail.com</strong></a>
+    </div>
+    <button class="btn btn-ghost no-print pdf-btn" type="button" onclick="window.print()">Salvar em PDF</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Associação Social, Cultural e Esportiva Transformação Belo Horizonte · ATBH · CNPJ 38.245.317/0001-60</span>
+    <span>Rua Vitória, 110 · São Lucas · Belo Horizonte/MG · CEP 30240-630</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  // ---- Menu aparece depois da capa ----
+  var nav=document.getElementById('nav');
+  var onScroll=function(){nav.classList.toggle('show',window.scrollY>window.innerHeight*0.85)};
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  // ---- Música de fundo (baixinha, a partir do refrão) ----
+  // Regra: toca quando o visitante quer música E a reportagem não está tocando.
+  var bgm=document.getElementById('bgm'),btn=document.getElementById('music'),report=document.getElementById('report');
+  var VOL=0.15,CHORUS=58.2,wanted=true,userChose=false; // CHORUS: refrão "Uma só voz, um só caminho"
+  var toChorus=function(){if(bgm.currentTime<1){try{bgm.currentTime=CHORUS}catch(e){}}};
+  bgm.addEventListener('loadedmetadata',toChorus);
+  var shouldPlay=function(){return wanted&&report.paused};
+  var fade=function(to,done){
+    if(window.gsap){gsap.to(bgm,{volume:to,duration:.6,overwrite:true,onComplete:done})}else{bgm.volume=to;done&&done()}
+  };
+  var setUi=function(){
+    var on=!bgm.paused;
+    btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',on);
+    var t=on?'Desligar música':(wanted&&!report.paused?'Música pausada durante o vídeo':'Ligar música');
+    btn.setAttribute('aria-label',t);btn.title=t;
+  };
+  var sync=function(){
+    if(shouldPlay()){
+      if(bgm.paused){
+        bgm.volume=0;toChorus();
+        bgm.play().then(function(){shouldPlay()?fade(VOL):bgm.pause()}).catch(function(){}); // bloqueado até a 1ª interação
+      }else fade(VOL);
+    }else if(!bgm.paused){
+      fade(0,function(){if(!shouldPlay())bgm.pause()});
+    }
+  };
+  bgm.addEventListener('play',setUi);bgm.addEventListener('pause',setUi);
+  btn.addEventListener('click',function(){userChose=true;wanted=bgm.paused;sync();setUi()});
+  // O navegador só libera som após um clique/toque/tecla: a música entra na primeira interação
+  var firstTouch=function(e){
+    if(e.target.closest&&e.target.closest('#music'))return;
+    if(!userChose){wanted=true;sync()}
+  };
+  var unlockEvents=['pointerdown','pointerup','click','keydown','touchend'];
+  unlockEvents.forEach(function(t){document.addEventListener(t,firstTouch,true)});
+  bgm.addEventListener('play',function(){unlockEvents.forEach(function(t){document.removeEventListener(t,firstTouch,true)})});
+  sync(); // tenta tocar já ao abrir (funciona onde o navegador permitir)
+  // Reportagem: play pausa a música; pause/fim retoma
+  ['play','pause','ended'].forEach(function(e){report.addEventListener(e,function(){sync();setUi()})});
+  // Rolou para fora da reportagem enquanto ela tocava: pausa o vídeo e a música volta
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){es.forEach(function(en){if(!en.isIntersecting&&!report.paused)report.pause()})},{threshold:.25}).observe(report);
+  }
+
+  if(!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger);
+  var mm=gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)",function(){
+    // ---- Capa: montagem da revista ----
+    var cv=gsap.timeline({defaults:{ease:"power4.out"}});
+    cv.from(".cover-photo img",{scale:1.2,duration:2.4,ease:"power2.out"},0)
+      .from(".masthead h1 span",{yPercent:100,autoAlpha:0,duration:1,stagger:.1},.15)
+      .from(".issue",{y:-20,autoAlpha:0,duration:.6},.3)
+      .from(".mast-side",{scale:.6,rotate:-12,autoAlpha:0,duration:.9,ease:"back.out(1.8)"},.6)
+      .from(".kicker",{x:-30,autoAlpha:0,duration:.5},.8)
+      .from(".cover h2 .line>span",{yPercent:110,duration:1,stagger:.1},.85)
+      .from(".cv-line",{x:60,rotate:3,autoAlpha:0,duration:.7,stagger:.12,ease:"back.out(1.6)"},1.1)
+      .from(".cover-lede, .cover-cta",{y:20,autoAlpha:0,duration:.7,stagger:.1},1.3);
+    gsap.to(".cover-photo img",{yPercent:10,ease:"none",scrollTrigger:{trigger:".cover",start:"top top",end:"bottom top",scrub:true}});
+    gsap.to(".masthead h1",{yPercent:-25,ease:"none",scrollTrigger:{trigger:".cover",start:"top top",end:"bottom top",scrub:true}});
+
+    // ---- Contadores ----
+    gsap.utils.toArray("[data-count]").forEach(function(el){
+      var end=+el.dataset.count,o={v:0};
+      gsap.to(o,{v:end,duration:1.8,ease:"power2.out",scrollTrigger:{trigger:el,start:"top 90%",once:true},onUpdate:function(){el.textContent=Math.round(o.v)}});
+    });
+    gsap.from(".stat",{y:40,autoAlpha:0,stagger:.1,duration:.8,ease:"power3.out",scrollTrigger:{trigger:".stats-grid",start:"top 88%"}});
+
+    // ---- Revelações ----
+    gsap.utils.toArray(".reveal").forEach(function(el){
+      gsap.from(el,{y:40,autoAlpha:0,duration:.9,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"}});
+    });
+    gsap.utils.toArray(".reveal-img").forEach(function(el){
+      gsap.from(el,{clipPath:"inset(100% 0 0 0)",duration:1.2,ease:"power4.inOut",scrollTrigger:{trigger:el,start:"top 80%"}});
+    });
+
+    // ---- A Serra: risco riscado vira oportunidade ----
+    var vs=gsap.timeline({scrollTrigger:{trigger:"#versus",start:"top 80%"}});
+    gsap.utils.toArray(".vs-row").forEach(function(row,i){
+      vs.from(row.querySelector(".bad"),{x:-30,autoAlpha:0,duration:.4},i*.25)
+        .from(row.querySelector(".arrow"),{scale:0,duration:.35,ease:"back.out(3)"},i*.25+.2)
+        .from(row.querySelector(".good"),{x:30,autoAlpha:0,duration:.4},i*.25+.35);
+    });
+
+    // ---- Pilha de fotos ----
+    var stack=gsap.timeline({scrollTrigger:{trigger:".photo-stack",start:"top 80%"}});
+    stack.from(".photo-stack .a",{clipPath:"inset(100% 0 0 0)",duration:1.1,ease:"power4.inOut"})
+         .from(".photo-stack .b",{clipPath:"inset(0 0 0 100%)",duration:1,ease:"power4.inOut"},"-=.6")
+         .from(".tag-float",{scale:0,rotate:-20,duration:.6,ease:"back.out(2)"},"-=.3");
+
+    // ---- Metodologia ----
+    var steps=gsap.timeline({scrollTrigger:{trigger:"#steps",start:"top 75%"}});
+    steps.from(".step .dot",{scale:0,duration:.5,stagger:.18,ease:"back.out(2.2)"})
+         .from(".step h3, .step p",{y:16,autoAlpha:0,duration:.5,stagger:.06},"-=.7")
+         .to(".steps .bar",{width:"88%",duration:1.4,ease:"power2.inOut"},0);
+
+    // ---- Galeria ----
+    gsap.from(".gallery figure",{y:60,autoAlpha:0,duration:.9,stagger:.08,ease:"power3.out",scrollTrigger:{trigger:".gallery",start:"top 80%"}});
+
+    // ---- Barra de valores ----
+    gsap.from(".split-bar i",{scaleX:0,transformOrigin:"left",duration:1.2,stagger:.3,ease:"power3.inOut",scrollTrigger:{trigger:".split-bar",start:"top 85%"}});
+
+    gsap.from(".cta-bg img",{scale:1.25,ease:"none",scrollTrigger:{trigger:".cta",scrub:true}});
+    gsap.from(".cta-title .line>span",{yPercent:110,duration:1,stagger:.12,ease:"power4.out",scrollTrigger:{trigger:".cta-title",start:"top 85%"}});
+    gsap.to(".btn-wa",{scale:1.05,duration:.8,yoyo:true,repeat:-1,ease:"sine.inOut",scrollTrigger:{trigger:".cta-main",start:"top 90%",toggleActions:"play pause resume pause"}});
+  });
+
+  // ---- Conquistas: rolagem horizontal fixada no desktop ----
+  mm.add("(min-width: 861px) and (prefers-reduced-motion: no-preference)",function(){
+    var track=document.getElementById('track');
+    var dist=function(){return Math.max(0,track.scrollWidth-window.innerWidth+32)};
+    var tl=gsap.timeline({scrollTrigger:{trigger:"#conquistas",start:"top top",end:function(){return "+="+dist()},pin:true,scrub:1,invalidateOnRefresh:true,refreshPriority:1}});
+    tl.to(track,{x:function(){return -dist()},ease:"none"});
+    gsap.utils.toArray(".year .yimg img").forEach(function(img){
+      gsap.to(img,{scale:1,ease:"none",scrollTrigger:{trigger:img,containerAnimation:tl,start:"left right",end:"right left",scrub:true}});
+    });
+  });
+  mm.add("(max-width: 860px) and (prefers-reduced-motion: no-preference)",function(){
+    gsap.utils.toArray(".year").forEach(function(el){
+      gsap.from(el,{y:50,autoAlpha:0,duration:.8,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"}});
+    });
+  });
+
+  window.addEventListener('beforeprint',function(){ScrollTrigger.getAll().forEach(function(t){t.progress(1)});gsap.globalTimeline.progress(1)});
+})();
+</script>
+</body>
+</html>
