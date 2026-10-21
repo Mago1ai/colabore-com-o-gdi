@@ -627,7 +627,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
   // ---- Música de fundo (baixinha, a partir do refrão) ----
   // Regra: toca quando o visitante quer música E a reportagem não está tocando.
   var bgm=document.getElementById('bgm'),btn=document.getElementById('music'),report=document.getElementById('report');
-  var VOL=0.15,CHORUS=58.2,wanted=true,userChose=false; // CHORUS: refrão "Uma só voz, um só caminho"
+  // O arquivo já vem com -17 dB (fica baixo até no iPhone, que ignora audio.volume); VOL=1 mantém igual em todo aparelho
+  var VOL=1,CHORUS=58.2,wanted=true,userChose=false; // CHORUS: refrão "Uma só voz, um só caminho"
   var toChorus=function(){if(bgm.currentTime<1){try{bgm.currentTime=CHORUS}catch(e){}}};
   bgm.addEventListener('loadedmetadata',toChorus);
   var shouldPlay=function(){return wanted&&report.paused};
